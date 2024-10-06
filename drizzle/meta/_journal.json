@@ -15,6 +15,20 @@
       "when": 1728194890683,
       "tag": "0001_public_shard",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1728204807603,
+      "tag": "0002_young_fantastic_four",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1728204945355,
+      "tag": "0003_worried_logan",
+      "breakpoints": true
     }
   ]
 }

@@ -1,7 +1,6 @@
 import GoogleProvider from "next-auth/providers/google"
 import { db } from "../db/db";
 import { users } from "../db/schema";
-import { callbackify } from "util";
 import { AuthOptions } from "next-auth";
 
 export const authOptions :AuthOptions={
@@ -10,8 +9,6 @@ export const authOptions :AuthOptions={
             clientId:process.env.GOOGLE_CLIENT_ID!,
             clientSecret:process.env.GOOGLE_CLIENT_SECRET!  , 
             async profile(profile,token:any){
-                console.log("profile" , profile)
-                console.log("token" , token);
 
                 const data ={
                     fname:profile.given_name,

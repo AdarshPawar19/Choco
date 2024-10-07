@@ -8,12 +8,13 @@ import { getAllProducts } from '@/http/api'
 import { Product } from '@/types'
 import ProductSheet from './product-sheet'
 import { useNewProduct } from '@/store/product/product-store'
+import { Loader2 } from 'lucide-react'
 
 
 
 function Products() {
   const {onOpen}=useNewProduct()
-  const {data : products}=useQuery<Product[]>({
+  const {data : products , isLoading}=useQuery<Product[]>({
     queryKey:['products'],
     queryFn:getAllProducts
   });
@@ -26,7 +27,10 @@ function Products() {
       <Button size={"sm"} onClick={onOpen}>Add Product</Button>
       <ProductSheet/>
     </div>
-    <DataTable columns={columns} data={products|| []}/>
+    {isLoading ? <div className='flex items-center justify-center'>
+        <Loader2 className='size-10 animate-spin' />
+    </div> : <DataTable columns={columns} data={products|| []}/>}
+    
    </>
   )
 }

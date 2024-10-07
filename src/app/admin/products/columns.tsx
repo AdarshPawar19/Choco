@@ -37,8 +37,4 @@ export const columns: ColumnDef<Product>[] =[
           </DropdownMenu>
         }
     },
-    {
-        accessorKey:"name",
-        header:"Name"
-    },
 ]

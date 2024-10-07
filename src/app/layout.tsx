@@ -4,6 +4,7 @@ import "./globals.css";
 import { cn } from "@/lib/utils";
 import { QueryClient  } from '@tanstack/react-query'
 import { QueryProvider } from "@/providers/queryProvider";
+import { Toaster } from "@/components/ui/toaster";
 const fontSans=FontSans({
   subsets:["latin"],
   variable:"--font-sans"
@@ -29,7 +30,7 @@ export default function RootLayout({
         <QueryProvider>
         {children}
         </QueryProvider>
-        
+        <Toaster/>
       </body>
     </html>
   );

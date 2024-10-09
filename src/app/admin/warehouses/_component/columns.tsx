@@ -1,7 +1,7 @@
-import { Product } from '@/types';
+import { Product, Warehouse } from '@/types';
 import { ColumnDef } from '@tanstack/react-table';
 
-export const columns: ColumnDef<Product>[] = [
+export const columns: ColumnDef<Warehouse>[] = [
     {
         accessorKey: 'name',
         header: 'Name',

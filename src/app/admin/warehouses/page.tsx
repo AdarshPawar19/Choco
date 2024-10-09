@@ -6,13 +6,13 @@ import { useNewWareHouse } from '@/store/warehouse/warehouse-store'
 import { useQuery } from '@tanstack/react-query'
 import { getAllWarehouses } from '@/http/api'
 import { Loader2 } from 'lucide-react'
-import { DataTable } from '../products/data-table'
 import { columns } from './_component/columns'
-import { Product } from '@/types'
+import { Product, Warehouse } from '@/types'
+import { DataTable } from './_component/data-table'
 
 function WarehousePage() {
     const {onOpen}=useNewWareHouse();
-    const {data : warehouses,isFetching,isError}=useQuery<Product[]>({
+    const {data : warehouses,isFetching,isError}=useQuery<Warehouse[]>({
         queryKey:["warehouses"],
         queryFn:getAllWarehouses
     })

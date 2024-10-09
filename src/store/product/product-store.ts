@@ -8,7 +8,7 @@ type NewProductSchema={
 
 export const useNewProduct =create<NewProductSchema>((set)=>{
     return {
-        isOpen:false,
+        isOpen:false,//initialState
         onOpen:()=>set({isOpen:true}),
         onClose:()=>set({isOpen:false})
     }

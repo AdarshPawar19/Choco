@@ -1,7 +1,7 @@
 "use client"
 import { getSingleProduct } from '@/http/api';
 import { useQuery } from '@tanstack/react-query';
-import { useParams } from 'next/navigation'
+import { useParams, usePathname } from 'next/navigation'
 import React from 'react'
 import Header from '../../_component/header';
 import Image from 'next/image';
@@ -17,6 +17,8 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import { useSession } from 'next-auth/react';
+import Link from 'next/link';
 
 type RouteParams={
     id:string
@@ -24,7 +26,11 @@ type RouteParams={
 
 function SingleProduct() {
 
-    const params=useParams<RouteParams>();
+    const params=useParams<RouteParams>();//Shayd ye params nextJs ke filesystem se id leke ata hai
+    const pathname=usePathname();
+    console.log("pathname ",pathname);
+    
+    const {data:session}=useSession();
     
     const{data:product ,isLoading:isLoadingForSingleProduct}= useQuery<SingleProductOutput>({
         queryKey:["products",params.id],
@@ -72,7 +78,7 @@ function SingleProduct() {
             </div>
             {isLoadingForSingleProduct ? <>
                 <div className="flex flex-1 flex-col gap-y-2">
-                            <Skeleton className="h-4 w-16 bg-brown-100" />
+                            <Skeleton className="h-4 w-24 bg-brown-100" />
                             <Skeleton className="h-10 w-2/3 bg-brown-100" />
                             <div className="flex items-center gap-x-3">
                                 <div className="flex items-center gap-x-0.5">
@@ -176,7 +182,8 @@ function SingleProduct() {
                     <Separator className='my-6 bg-brown-900' />
                     <div className='flex items-center justify-between'>
                         <span className='text-3xl font-semibold'>$50</span>
-                        <Button type='submit' style={{width:"160px"}}>Buy Now</Button>
+                        {session ? <><Button type='submit' style={{width:"160px"}}>Buy Now</Button></>
+                        :<><Link href={`/api/auth/signin?callbackUrl=${pathname}`}><Button type='submit' style={{width:"160px"}}>Buy Now</Button></Link></>}
                     </div>
                 </form>
             </Form>

@@ -25,3 +25,13 @@ export interface InventoryOutput{
     warehouse:string,
     product:string
 }
+
+export interface SingleProductOutput{
+    id:string,
+    name:string,
+    image:string,
+    description:string,
+    price:number,
+    updatedAt:Date,
+    createdAt:Date
+}

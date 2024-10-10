@@ -1,5 +1,6 @@
 import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
+import { Skeleton } from '@/components/ui/skeleton'
 import { getAllProducts } from '@/http/api'
 import { Product } from '@/types'
 import { useQuery } from '@tanstack/react-query'
@@ -9,7 +10,8 @@ import React from 'react'
 
 function Products() {
 
-    const {data : products}=useQuery<Product[]>({
+    const skeletons=Array.from({length:4})
+    const {data : products , isFetching}=useQuery<Product[]>({
         queryKey:["products"],
         queryFn:getAllProducts,
         staleTime:20*1000
@@ -24,7 +26,17 @@ function Products() {
         <Separator className="h-0.5 w-20 bg-brown-900" />
        </div>
        <div className="mx-auto mt-20 grid grid-cols-1 gap-8 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-                            {products?.map((product: Product) => {
+                        {isFetching  ? <>
+                            {skeletons.map((_, i) => (
+                                <div key={i} className="flex h-full w-full flex-col gap-5" style={{ width: '75%' }}>
+                                    <Skeleton className="aspect-square w-full rounded-md bg-brown-100" />
+                                    <Skeleton className="h-5 w-full rounded-md bg-brown-100" />
+                                    <Skeleton className="h-5 w-10 rounded-md bg-brown-100" />
+                                    <Skeleton className="h-8 w-full rounded-md bg-brown-100" />
+                                </div>
+                            ))}
+                        </> : <>
+                        {products?.map((product: Product) => {
                                 return (
                                     <div
                                         key={product.id}
@@ -33,11 +45,11 @@ function Products() {
                                         //TODO:convert jpeg into svg for image optimization
                                             src={`/assets/${product.image}`}
                                             alt={product.name}
-                                            width={0}
-                                            height={0}
-                                            sizes="100vw"
-                                            style={{ width: '100%' }}
-                                             className="aspect-square rounded-t-md object-cover shadow-lg hover:cursor-pointer"
+                                            width={300}
+                                            height={300}
+                                            //sizes="100vw"
+                                            style={{ width: '75%' }}
+                                            className="aspect-square rounded-t-md object-cover shadow-lg hover:cursor-pointer"
                                         />
 
                                         <div className="w-full">
@@ -51,6 +63,7 @@ function Products() {
                                             <Link href={`/product/${product.id}`}>
                                                 <Button
                                                     size={'sm'}
+                                                    style={{width:"75%"}}
                                                     className="mt-5 w-full bg-brown-900 hover:bg-brown-800 active:bg-brown-700">
                                                     Buy Now
                                                 </Button>
@@ -58,8 +71,10 @@ function Products() {
                                         </div>
                                     </div>
                                 );
-                            })}
-                        </div>
+                        })}
+                        </> 
+                        }
+       </div>
       
       </section>
     </>

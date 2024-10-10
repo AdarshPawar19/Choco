@@ -1,4 +1,4 @@
-import { DeliveryOutput, Product, Warehouse } from "@/types";
+import { DeliveryOutput, InventoryOutput, Product, Warehouse } from "@/types";
 import { api } from "./client"
 import { DeliveryPersonValue } from "@/app/admin/delivery-persons/_component/create-delivery-person-form";
 
@@ -33,5 +33,10 @@ export const getAllDeliveryPersonData =async():Promise<DeliveryOutput[]>=>{
 
 export const createDeliveryPersonData =async(data:DeliveryPersonValue)=>{
     const response=await api.post('/delivery-persons',data);
+    return response.data;
+}
+
+export const getAllInventories=async():Promise<InventoryOutput[]>=>{
+    const response =await api.get<InventoryOutput[]>("/inventories");
     return response.data;
 }

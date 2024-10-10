@@ -18,3 +18,10 @@ export interface DeliveryOutput{
     phone:string,
     warehouse:string
 }
+
+export interface InventoryOutput{
+    id:number,
+    sku:string,
+    warehouse:string,
+    product:string
+}

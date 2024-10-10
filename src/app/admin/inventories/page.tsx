@@ -22,7 +22,7 @@ function InventoriesPage() {
   return (
     <>
             <div className="flex items-center justify-between">
-                <h3 className="text-2xl font-bold tracking-tight">Delivery Persons</h3>
+                <h3 className="text-2xl font-bold tracking-tight">Inventory</h3>
                 <Button size={'sm'} onClick={onOpen}>
                     Add Inventory
                 </Button>

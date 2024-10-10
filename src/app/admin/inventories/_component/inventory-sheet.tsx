@@ -5,30 +5,30 @@ import {
     SheetHeader,
     SheetTitle,
 } from '@/components/ui/sheet';
-import { useNewDeliveryPerson } from '@/store/deliveryPerson/deliveryPerson-store';
 import React from 'react'
-import CreateInventoryForm, { DeliveryPersonValue } from './create-inventory-form';
+import CreateInventoryForm, { InventoryValue } from './create-inventory-form';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { createDeliveryPersonData } from '@/http/api';
+import {  createInventoryData } from '@/http/api';
 import { useToast } from '@/hooks/use-toast';
+import { useNewInventorieState } from '@/store/inventoreis/inventory-store';
 
 function InventorySheet() {
-    const {isOpen,onClose}=useNewDeliveryPerson();
+    const {isOpen,onClose}=useNewInventorieState();
     const {toast}=useToast()
     const queryClient=useQueryClient();
     const{mutate, isPending}=useMutation({
-        mutationKey:["delivery-persons"],
-        mutationFn:(data:DeliveryPersonValue)=>createDeliveryPersonData(data),
+        mutationKey:["inventories"],
+        mutationFn:(data:InventoryValue)=>createInventoryData(data),
         onSuccess:()=>{
-            queryClient.invalidateQueries({queryKey:["delivery-persons"]});
+            queryClient.invalidateQueries({queryKey:["inventories"]});
             toast({
-                title:"Delivery Person data created successfully"
+                title:"Inventory created successfully"
             })
             onClose()
         }
     })
 
-    const sendData=(value:DeliveryPersonValue)=>{
+    const sendData=(value:InventoryValue)=>{
         mutate(value)
     }
 
@@ -37,8 +37,8 @@ function InventorySheet() {
         <Sheet open={isOpen} onOpenChange={onClose}>
             <SheetContent className="min-w-[28rem] space-y-4">
                 <SheetHeader>
-                    <SheetTitle>Create Delivery Person</SheetTitle>
-                    <SheetDescription>Create a new delivery person</SheetDescription>
+                    <SheetTitle>Create Inventory</SheetTitle>
+                    <SheetDescription>Create a new inventory </SheetDescription>
                 </SheetHeader>
                 <CreateInventoryForm onSubmit={sendData} disabled={isPending}/>
             </SheetContent>

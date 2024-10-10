@@ -17,41 +17,45 @@ import {
 import { useForm } from 'react-hook-form';
 import { Input } from '@/components/ui/input';
 import { z } from 'zod';
-import { deliveryPersonsSchema } from '@/lib/validators/deliveryPersonSchema';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '@/components/ui/button';
 import { Loader2 } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
-import { Warehouse } from '@/types';
-import { getAllWarehouses } from '@/http/api';
+import { Product, Warehouse } from '@/types';
+import { getAllProducts, getAllWarehouses } from '@/http/api';
+import { inventorySchema } from '@/lib/validators/InventorySchema';
 
 
-export type DeliveryPersonValue=z.input<typeof deliveryPersonsSchema>
+export type InventoryValue=z.input<typeof inventorySchema>
 
-type DeliverypersonProps={
-    onSubmit:(value : DeliveryPersonValue)=>void,
+type InventoryProps={
+    onSubmit:(value : InventoryValue)=>void,
     disabled:boolean
 }
 
-function CreateInventoryForm({onSubmit,disabled} : DeliverypersonProps) {
+function CreateInventoryForm({onSubmit,disabled} : InventoryProps) {
 
-    const form=useForm<z.input<typeof deliveryPersonsSchema>>({
+    const form=useForm<z.input<typeof inventorySchema>>({
         defaultValues:{
-            name:"",
-            phone:"",
-            warehouseId:0
+            sku:"",
+            
         },
-        resolver:zodResolver(deliveryPersonsSchema),
-        mode:"all"
+        resolver:zodResolver(inventorySchema),
+        // mode:"all"
     })
 
-    const sendData=(value:DeliveryPersonValue)=>{
+    const sendData=(value:InventoryValue)=>{
         onSubmit(value)
     }
   
-    const {data: warehouses,isLoading} = useQuery<Warehouse[]>({
+    const {data: warehouses,isLoading:isLoadingForWarehouse} = useQuery<Warehouse[]>({
         queryKey: ['warehouses'],
         queryFn: () => getAllWarehouses(),
+    });
+
+    const {data: products,isLoading:isLoadingForProduct} = useQuery<Product[]>({
+        queryKey: ['products'],
+        queryFn: getAllProducts,
     });
 
     return (
@@ -59,30 +63,18 @@ function CreateInventoryForm({onSubmit,disabled} : DeliverypersonProps) {
             <form onSubmit={form.handleSubmit(sendData)} className="space-y-8">
                 <FormField
                     control={form.control}
-                    name="name"
+                    name="sku"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>Name</FormLabel>
+                            <FormLabel>SKU</FormLabel>
                             <FormControl>
-                                <Input placeholder="e.g. John Doe" {...field} />
+                                <Input placeholder="e.g. CH123456" {...field} />
                             </FormControl>
                             <FormMessage />
                         </FormItem>
                     )}
                 />
-                <FormField
-                    control={form.control}
-                    name="phone"
-                    render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>Phone</FormLabel>
-                            <FormControl>
-                                <Input placeholder="e.g. +918899889988" {...field} />
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                    )}
-                />
+                
                 <FormField
                     control={form.control}
                     name="warehouseId"
@@ -90,15 +82,17 @@ function CreateInventoryForm({onSubmit,disabled} : DeliverypersonProps) {
                         <FormItem>
                             <FormLabel>Warehouse ID</FormLabel>
                             <Select
-                                onValueChange={(value:any) => field.onChange(parseInt(value))}
-                                defaultValue={field.value ? field.value.toString() : ''}>
+                                // Here onValueChange takes value as string compulsory
+                                onValueChange={(value:string) => field.onChange(parseInt(value))}
+                                // here defaultValue and normal value for warehuse both MUST be string otherwise we recieve complaint 
+                                defaultValue={String(field.value)}>
                                 <FormControl>
                                     <SelectTrigger>
                                         <SelectValue placeholder="Select Warehouse ID" />
                                     </SelectTrigger>
                                 </FormControl>
                                 <SelectContent>
-                                    {isLoading ? (
+                                    {isLoadingForWarehouse ? (
                                         <SelectItem value="Loading">Loading...</SelectItem>
                                     ) : (
                                         <>
@@ -106,10 +100,47 @@ function CreateInventoryForm({onSubmit,disabled} : DeliverypersonProps) {
                                                 warehouses.map((item) => (
                                                     <SelectItem
                                                         key={item.id}
+                                                        // here value must be string only!!
                                                         value={item.id ? item.id?.toString() : ''}>
                                                         {item.name}
                                                     </SelectItem>
-                                                ))}
+                                            ))}
+                                        </>
+                                    )}
+                                </SelectContent>
+                            </Select>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
+
+                    <FormField
+                    control={form.control}
+                    name="productId"
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>Product</FormLabel>
+                            <Select
+                                onValueChange={(value:any) => field.onChange(parseInt(value))}
+                                defaultValue={field.value ? field.value.toString() : ''}>
+                                <FormControl>
+                                    <SelectTrigger>
+                                        <SelectValue placeholder="Select product " />
+                                    </SelectTrigger>
+                                </FormControl>
+                                <SelectContent>
+                                    {isLoadingForProduct ? (
+                                        <SelectItem value="Loading">Loading...</SelectItem>
+                                    ) : (
+                                        <>
+                                            {products &&
+                                                products.map((item) => (
+                                                    <SelectItem
+                                                        key={item.id}
+                                                        value={item.id ? item.id?.toString() : ''}>
+                                                        {item.name}
+                                                    </SelectItem>
+                                            ))}
                                         </>
                                     )}
                                 </SelectContent>

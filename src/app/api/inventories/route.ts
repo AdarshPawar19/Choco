@@ -16,6 +16,7 @@ export async function POST(request:Request) {
         await db.insert(inventories).values(validatedData);
         return Response.json({message:"OK"},{status:201});
     } catch (error) {
+        //TODO:check database status code  and if duplicate value code then send the message to the client
         return Response.json({message:"Failed to store inventory in db."},{status:500})
     }
 }

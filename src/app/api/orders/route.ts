@@ -1,3 +1,4 @@
+import crypto from "node:crypto"
 import { authOptions } from "@/lib/auth/authOptions";
 import { db } from "@/lib/db/db";
 import { deliveryPersons, inventories, orders, products, warehouses } from "@/lib/db/schema";
@@ -7,15 +8,15 @@ import { getServerSession } from "next-auth";
 
 export async function POST(request:Request) {
     //get session
-    const session=await getServerSession(authOptions);
-    console.log("session ",session);
+    const session = await getServerSession(authOptions);
+    console.log('sessionnnn', session);
 
     if(!session){
         return Response.json({message:"Not allowed"},{status:401}) 
     }
 
-    //validate request body
-    const requestedData=request.json();
+    //validate request body 
+    const requestedData=await request.json();
     let validateData;
     try {
         validateData= orderSchema.parse(requestedData);
@@ -123,6 +124,42 @@ export async function POST(request:Request) {
         return Response.json({message:transactionError ? transactionError : "Error while db transaction."} ,{status:500})
     }
 
-    //payment
+    
     //create invoice
+
+    const paymentUrl="https://api.cryptomus.com/v1/payment"
+
+    const paymentData={
+        amount:String(finalOrder.price),
+        currency:"USD",
+        order_id:String(finalOrder.id),
+        //TODO: move these urls to env
+        url_return:`${process.env.NEXT_PUBLIC_BACKEND_URL}/payment/return` ,
+        url_success:`${process.env.NEXT_PUBLIC_BACKEND_URL}/payment/success`,
+        url_callback:"https://32af-2405-201-101e-609e-245a-a1aa-589c-da67.ngrok-free.app/api/payment/callback"
+    }
+
+   const stringData= btoa(JSON.stringify(paymentData)) +process.env.CRYPTO_API_KEYY!
+
+   const sign= crypto.createHash("md5").update(stringData).digest('hex');
+   const headers={
+    merchent:process.env.CRYPTOP_MERCENT_ID!,
+    sign:sign
+   }
+
+   try {
+    const response =await axios.post(paymentUrl,paymentData,{
+        headers
+    })
+
+    console.log("response of data ",response.data);
+    return Response.json({ paymentUrl: response.data });
+   } catch (error) {
+
+    console.log("Error ",error);
+    return Response.json({
+        message: 'Failed to create an invoice',
+    });
+   }
+
 }

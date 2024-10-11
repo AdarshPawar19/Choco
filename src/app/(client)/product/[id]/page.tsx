@@ -28,7 +28,6 @@ function SingleProduct() {
 
     const params=useParams<RouteParams>();//Shayd ye params nextJs ke filesystem se id leke ata hai
     const pathname=usePathname();
-    console.log("pathname ",pathname);
     
     const {data:session}=useSession();
     
@@ -54,6 +53,16 @@ function SingleProduct() {
         console.log(value);
         
     }
+
+    const qty=form.watch("qty");
+    const price=React.useMemo(()=>{
+        if(product?.price){
+            return product?.price * qty
+        }
+        return 0;
+    },[qty,product])
+
+    
 
   return (
     <>
@@ -169,6 +178,7 @@ function SingleProduct() {
                             type="number"
                             className="h-9 border-brown-200 bg-white placeholder:text-gray-300 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-brown-400 focus-visible:ring-offset-0"
                             placeholder="e.g. 1"
+                            
                             {...field}
                             />
                             </FormControl>
@@ -181,7 +191,7 @@ function SingleProduct() {
                     </div>
                     <Separator className='my-6 bg-brown-900' />
                     <div className='flex items-center justify-between'>
-                        <span className='text-3xl font-semibold'>$50</span>
+                        <span className='text-3xl font-semibold'>${price}</span>
                         {session ? <><Button type='submit' style={{width:"160px"}}>Buy Now</Button></>
                         :<><Link href={`/api/auth/signin?callbackUrl=${pathname}`}><Button type='submit' style={{width:"160px"}}>Buy Now</Button></Link></>}
                     </div>
